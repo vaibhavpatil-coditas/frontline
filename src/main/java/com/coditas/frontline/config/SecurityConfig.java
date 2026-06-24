@@ -1,9 +1,11 @@
 package com.coditas.frontline.config;
 
 import com.coditas.frontline.Security.jwt.JwtFilter;
+import com.coditas.frontline.constants.ApiPaths;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,7 +30,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/v1/login", "/api/v1/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Customer.CUSTOMERS).permitAll()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.LOGIN).permitAll()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Manager.MANAGERS).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -45,6 +49,6 @@ public class SecurityConfig {
                                                         PasswordEncoder passwordEncoder){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager();
+        return new ProviderManager(daoAuthenticationProvider);
     }
 }

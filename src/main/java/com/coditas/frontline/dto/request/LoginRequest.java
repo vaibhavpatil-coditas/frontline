@@ -1,15 +1,10 @@
 package com.coditas.frontline.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class UserRequest {
-    @Email
-    @NotBlank
+public class LoginRequest {
     private String email;
-    @NotBlank
     private String password;
 }
