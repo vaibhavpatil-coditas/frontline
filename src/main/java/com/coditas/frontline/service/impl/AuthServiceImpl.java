@@ -1,6 +1,6 @@
 package com.coditas.frontline.service.impl;
 
-import com.coditas.frontline.Security.jwt.JwtUtil;
+import com.coditas.frontline.security.jwt.JwtUtil;
 import com.coditas.frontline.dto.request.LoginRequest;
 import com.coditas.frontline.dto.response.LoginResponse;
 import com.coditas.frontline.service.AuthService;
@@ -23,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         UserDetails principal = (UserDetails) authentication.getPrincipal();
+        assert principal != null;
         return new LoginResponse(jwtUtil.generateToken(principal.getUsername()));
     }
 }

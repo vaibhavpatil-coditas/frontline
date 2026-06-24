@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<UserDetails> findByEmail(String username);
+    Optional<User> findByEmail(String username);
 
     boolean existsByEmail(@Email @NotBlank String email);
 }

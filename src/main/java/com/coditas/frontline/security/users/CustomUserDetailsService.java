@@ -1,6 +1,7 @@
-package com.coditas.frontline.Security.user;
+package com.coditas.frontline.security.users;
 
 import com.coditas.frontline.constants.ExceptionMessage;
+import com.coditas.frontline.entity.User;
 import com.coditas.frontline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(()->
                 new UsernameNotFoundException(ExceptionMessage.EMAIL_NOT_FOUND));
     }

@@ -1,4 +1,4 @@
-package com.coditas.frontline.Security.jwt;
+package com.coditas.frontline.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.Instant;
 import java.util.Date;
 
 @Component

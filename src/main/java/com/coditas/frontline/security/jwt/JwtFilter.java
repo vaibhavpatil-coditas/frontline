@@ -1,4 +1,4 @@
-package com.coditas.frontline.Security.jwt;
+package com.coditas.frontline.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.split(" ")[1];
         String username = jwtUtil.extractUsername(token);
         if(!username.isBlank() && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails user = userDetailsService.loadUserByUsername(username);
+            User user = (User) userDetailsService.loadUserByUsername(username);
             if(jwtUtil.isValid(token, user)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

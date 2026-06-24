@@ -1,6 +1,6 @@
 package com.coditas.frontline.config;
 
-import com.coditas.frontline.Security.jwt.JwtFilter;
+import com.coditas.frontline.security.jwt.JwtFilter;
 import com.coditas.frontline.constants.ApiPaths;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +33,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Customer.CUSTOMERS).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.LOGIN).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Manager.MANAGERS).permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

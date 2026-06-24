@@ -19,4 +19,9 @@ public final class ApiPaths {
         private Agent(){}
         public static final String AGENTS = "/agents";
     }
+
+    public static final class Ticket {
+        private Ticket(){}
+        public static final String TICKETS = "/tickets";
+    }
 }
