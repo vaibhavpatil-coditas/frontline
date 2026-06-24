@@ -1,6 +1,7 @@
 package com.coditas.frontline.constants;
 
 public final class ApiPaths {
+
     private ApiPaths(){}
     public static final String BASE_PATH = "/api/v1";
     public static final String LOGIN = "/login";
@@ -16,12 +17,25 @@ public final class ApiPaths {
     }
 
     public static final class Agent {
+
         private Agent(){}
         public static final String AGENTS = "/agents";
+        public static final String AGENT_ID = "/{agent-id}";
     }
 
     public static final class Ticket {
         private Ticket(){}
         public static final String TICKETS = "/tickets";
+        public static final String TICKET_ID = "/{ticket-id}";
+        public static final String ASSIGN = "/assign";
+    }
+
+    public static final class Team {
+
+
+        private Team(){}
+        public static final String TEAMS = "/teams";
+        public static final String TEAM_ID = "/{team-id}";
+        public static final String ADD_MEMBER = "/members";
     }
 }

@@ -6,4 +6,6 @@ import jakarta.validation.Valid;
 
 public interface TicketService {
     TicketResponse raiseTicket(@Valid TicketRequest request);
+
+    TicketResponse assignAgent(Long ticketId, Long agentId);
 }

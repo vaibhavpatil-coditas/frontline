@@ -4,10 +4,13 @@ import com.coditas.frontline.dto.request.TicketRequest;
 import com.coditas.frontline.dto.response.TicketResponse;
 import com.coditas.frontline.entity.Ticket;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = UserMapper.class)
 public interface TicketMapper {
     Ticket toTicket(TicketRequest request);
 
+    @Mapping(source = "customer.id", target = "customerId")
+    @Mapping(source = "agent.id", target = "agentId")
     TicketResponse toTicketResponse(Ticket savedTicket);
 }

@@ -2,6 +2,7 @@ package com.coditas.frontline.config;
 
 import com.coditas.frontline.security.jwt.JwtFilter;
 import com.coditas.frontline.constants.ApiPaths;
+import com.coditas.frontline.security.users.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

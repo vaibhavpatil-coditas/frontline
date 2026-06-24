@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -29,5 +26,14 @@ public class TicketController {
         TicketResponse response = ticketService.raiseTicket(request);
         URI location = URI.create(ApiPaths.BASE_PATH+ApiPaths.Ticket.TICKETS+"/"+response.getId());
         return ResponseEntity.created(location).body(ApplicationResponse.success(response, "Ticket raised successfully"));
+    }
+
+    @PostMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.ASSIGN+ApiPaths.Agent.AGENT_ID)
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<ApplicationResponse<TicketResponse>> assignAgent(@PathVariable(name = "ticket-id") Long ticketId,
+                                                                           @PathVariable(name = "agent-id") Long agentId){
+        TicketResponse response = ticketService.assignAgent(ticketId, agentId);
+        URI location = URI.create(ApiPaths.BASE_PATH+ApiPaths.Ticket.TICKETS+"/"+response.getId());
+        return ResponseEntity.created(location).body(ApplicationResponse.success(response, "Ticket assigned to agent successfully"));
     }
 }
