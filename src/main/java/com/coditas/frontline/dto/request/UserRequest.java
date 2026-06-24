@@ -7,9 +7,11 @@ import lombok.Setter;
 
 @Getter @Setter
 public class UserRequest {
-    @Email
-    @NotBlank
+    @Email(message = "Incorrect email structure, please correct the email")
+    @NotBlank(message = "Email cannot be blank, please enter a email")
     private String email;
-    @NotBlank
+    @NotBlank(message = "Password cannot be blank, please enter a password")
     private String password;
+    @NotBlank(message = "Name cannot be blank, please enter a name")
+    private String name;
 }

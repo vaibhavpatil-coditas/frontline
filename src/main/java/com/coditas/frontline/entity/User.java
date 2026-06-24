@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
+    private String name;
+
     @Column(unique = true)
     private String email;
 
@@ -31,6 +34,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "user_role")
     private Role role;
+    
+    private Instant registeredOn;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
