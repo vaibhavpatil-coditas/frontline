@@ -23,7 +23,13 @@ public final class ApiPaths {
     }
 
     public static final class Ticket {
+
+
         private Ticket(){}
+        public static final String PRIORITY = "/priority";
+        public static final String RATE = "/rate";
+        public static final String ESCALATE = "/escalate";
+        public static final String RESOLVE = "/resolve";
         public static final String TICKETS = "/tickets";
         public static final String TICKET_ID = "/{ticket-id}";
         public static final String ASSIGN = "/assign";

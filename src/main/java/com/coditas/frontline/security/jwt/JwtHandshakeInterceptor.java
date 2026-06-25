@@ -39,7 +39,12 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             log.info("Failed due to invalid Authorization header");
             return false;
         }
-        Long ticketId = Long.parseLong(requestURI.split("/")[6]);
+        String[] split = requestURI.split("/");
+        Long ticketId;
+        if(split.length<5){
+            return false;
+        }
+        ticketId = Long.parseLong(split[6]);
         String token = authHeader.split(" ")[1];
         String username = jwtUtil.extractUsername(token);
         User user = (User) userDetailsService.loadUserByUsername(username);

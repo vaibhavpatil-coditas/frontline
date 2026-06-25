@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Customer.CUSTOMERS).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.LOGIN).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Manager.MANAGERS).permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

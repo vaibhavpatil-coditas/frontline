@@ -41,4 +41,8 @@ public class Ticket {
 
     @Column(name = "raised_at")
     private Instant raisedAt;
+
+    private Integer ratings;
+
+    private Integer priority;
 }

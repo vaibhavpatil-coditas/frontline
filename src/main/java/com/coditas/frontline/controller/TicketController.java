@@ -1,6 +1,8 @@
 package com.coditas.frontline.controller;
 
 import com.coditas.frontline.constants.ApiPaths;
+import com.coditas.frontline.dto.request.PriorityRequest;
+import com.coditas.frontline.dto.request.RatingsRequest;
 import com.coditas.frontline.dto.request.TicketRequest;
 import com.coditas.frontline.dto.response.ApplicationResponse;
 import com.coditas.frontline.dto.response.TicketResponse;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.BASE_PATH)
@@ -35,5 +38,47 @@ public class TicketController {
         TicketResponse response = ticketService.assignAgent(ticketId, agentId);
         URI location = URI.create(ApiPaths.BASE_PATH+ApiPaths.Ticket.TICKETS+"/"+response.getId());
         return ResponseEntity.created(location).body(ApplicationResponse.success(response, "Ticket assigned to agent successfully"));
+    }
+
+    @GetMapping(ApiPaths.Ticket.TICKETS)
+    public ResponseEntity<ApplicationResponse<List<TicketResponse>>> getAllTickets(){
+        List<TicketResponse> response = ticketService.getAll();
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Fetched all tickets"));
+    }
+
+    @GetMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID)
+    public ResponseEntity<ApplicationResponse<TicketResponse>> getTicketById(@PathVariable(name = "ticket-id") Long ticketId){
+        TicketResponse response = ticketService.getTicketById(ticketId);
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Fetched the ticket"));
+    }
+
+    @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.RESOLVE)
+    @PreAuthorize("hasRole('AGENT')")
+    public ResponseEntity<ApplicationResponse<TicketResponse>> resolveTicket(@PathVariable(name = "ticket-id") Long ticketId){
+        TicketResponse response = ticketService.resolveTicket(ticketId);
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Resolved the ticket"));
+    }
+
+    @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.ESCALATE)
+    @PreAuthorize("hasAnyRole('AGENT','MANAGER')")
+    public ResponseEntity<ApplicationResponse<TicketResponse>> escalateTicket(@PathVariable(name = "ticket-id") Long ticketId){
+        TicketResponse response = ticketService.escalateTicket(ticketId);
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Ticket escalated"));
+    }
+
+    @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.RATE)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ResponseEntity<ApplicationResponse<TicketResponse>> rateTicket(@PathVariable(name = "ticket-id") Long ticketId,
+                                                                          @RequestBody RatingsRequest request){
+        TicketResponse response = ticketService.rate(ticketId, request);
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Ticket rated"));
+    }
+
+    @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.PRIORITY)
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public ResponseEntity<ApplicationResponse<TicketResponse>> setPriority(@PathVariable(name = "ticket-id") Long ticketId,
+                                                                          @RequestBody PriorityRequest request){
+        TicketResponse response = ticketService.setPriority(ticketId, request);
+        return ResponseEntity.ok(ApplicationResponse.success(response, "Ticket priority set"));
     }
 }
