@@ -13,8 +13,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     List<WebSocketSession> webSocketSessions = Collections.synchronizedList(new ArrayList<>());
 
     @Override
-    public void
-    afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         webSocketSessions.add(session);
     }
