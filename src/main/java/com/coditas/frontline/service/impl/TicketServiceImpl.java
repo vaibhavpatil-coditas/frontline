@@ -1,6 +1,7 @@
 package com.coditas.frontline.service.impl;
 
 import com.coditas.frontline.constants.ExceptionMessage;
+import com.coditas.frontline.dto.request.EmailDetails;
 import com.coditas.frontline.dto.request.TicketRequest;
 import com.coditas.frontline.dto.response.TicketResponse;
 import com.coditas.frontline.entity.Ticket;
@@ -12,6 +13,7 @@ import com.coditas.frontline.exception.ResourceMismatchedException;
 import com.coditas.frontline.mapper.TicketMapper;
 import com.coditas.frontline.repository.TicketRepository;
 import com.coditas.frontline.repository.UserRepository;
+import com.coditas.frontline.service.EmailService;
 import com.coditas.frontline.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -28,10 +30,10 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Override
     public TicketResponse raiseTicket(TicketRequest request) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assert authentication != null;
         User customer = (User) authentication.getPrincipal();
@@ -42,6 +44,15 @@ public class TicketServiceImpl implements TicketService {
         ticket.setRaisedAt(Instant.now());
 
         Ticket savedTicket = ticketRepository.save(ticket);
+
+        assert customer != null;
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(customer.getEmail())
+                .msgBody("Your ticket has been raised with ticket id:"+ticket.getId())
+                .subject("Ticket Raised")
+                .build();
+        emailService.sendSimpleMail(emailDetails);
+
         return ticketMapper.toTicketResponse(savedTicket);
     }
 

@@ -17,7 +17,6 @@ public final class ApiPaths {
     }
 
     public static final class Agent {
-
         private Agent(){}
         public static final String AGENTS = "/agents";
         public static final String AGENT_ID = "/{agent-id}";
@@ -28,11 +27,10 @@ public final class ApiPaths {
         public static final String TICKETS = "/tickets";
         public static final String TICKET_ID = "/{ticket-id}";
         public static final String ASSIGN = "/assign";
+        public static final String CHAT = "/chat";
     }
 
     public static final class Team {
-
-
         private Team(){}
         public static final String TEAMS = "/teams";
         public static final String TEAM_ID = "/{team-id}";

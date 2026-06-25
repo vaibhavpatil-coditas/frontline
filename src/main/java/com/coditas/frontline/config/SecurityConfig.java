@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Customer.CUSTOMERS).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.LOGIN).permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.BASE_PATH+ApiPaths.Manager.MANAGERS).permitAll()
+                        .requestMatchers( "/api/v1/tickets/1/chat").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
