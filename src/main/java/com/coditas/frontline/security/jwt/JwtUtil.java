@@ -1,5 +1,6 @@
 package com.coditas.frontline.security.jwt;
 
+import com.coditas.frontline.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -45,10 +46,11 @@ public class JwtUtil {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User principal) {
         return Jwts.builder()
                 .signWith(getSigningKey())
-                .setSubject(username)
+                .setSubject(principal.getUsername())
+                .claim("Role", principal.getRole())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .setIssuedAt(new Date())
                 .compact();
