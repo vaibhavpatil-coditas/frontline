@@ -20,6 +20,7 @@ import com.coditas.frontline.repository.TicketRepository;
 import com.coditas.frontline.repository.UserRepository;
 import com.coditas.frontline.service.EmailService;
 import com.coditas.frontline.service.TicketService;
+import com.coditas.frontline.utility.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -46,20 +47,9 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse raiseTicket(MultipartFile file, TicketRequest request) throws IOException {
-        if (fileDataRepository.findByName(file.getOriginalFilename()).isPresent()){
-            if (file.getOriginalFilename().equals(fileDataRepository.findByName(file.getOriginalFilename()).get().getName())) {
+        if (fileDataRepository.findByName(file.getOriginalFilename()).isPresent() && file.getOriginalFilename().equals(fileDataRepository.findByName(file.getOriginalFilename()).get().getName())) {
                 throw new ResourceAlreadyExistsException(ExceptionMessage.FILE_ALREADY_EXISTS);
-            }
         }
-
-        FileData savedFile = fileDataRepository.save(FileData.builder()
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .data(file.getBytes())
-                .build());
-
-        log.info("File content in bytes: {}", savedFile.getData());
-        log.info("File content size: {}", savedFile.getData().length);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assert authentication != null;
@@ -73,15 +63,54 @@ public class TicketServiceImpl implements TicketService {
         Ticket savedTicket = ticketRepository.save(ticket);
         log.info("Ticket:{} has been persisted", ticket.getId());
 
+        FileData savedFile = fileDataRepository.save(FileData.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .data(FileUtils.compressFile(file.getBytes()))
+                .ticket(ticket)
+                .build());
+        log.info("File content in bytes: {}", savedFile.getData());
+        log.info("File content size: {}", savedFile.getData().length);
+
         assert customer != null;
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(customer.getEmail())
                 .msgBody("Your ticket has been raised with ticket id:"+ticket.getId())
                 .subject("Ticket Raised")
                 .build();
+
         emailService.sendSimpleMail(emailDetails);
         log.info("Email sent to recipient:{}", customer.getEmail());
         return ticketMapper.toTicketResponse(savedTicket);
+    }
+
+    @Override
+    public TicketResponse getTicketById(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
+                new NotFoundException(ExceptionMessage.TICKET_NOT_FOUND));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assert authentication != null;
+        User user = (User)authentication.getPrincipal();
+        assert user != null;
+        if(user.getRole().equals(Role.MANAGER) || !ticket.getCustomer().getId().equals(user.getId()) || (ticket.getAgent()!=null && !ticket.getAgent().getId().equals(user.getId()))){
+            throw new ResourceMismatchedException(ExceptionMessage.NOT_AUTHORIZED);
+        }
+
+        log.info("Ticket:{} is fetched", ticketId);
+        TicketResponse ticketResponse = ticketMapper.toTicketResponse(ticket);
+        log.info("Ticket content {}", ticketResponse);
+
+        FileData dbFileData = fileDataRepository.findByTicket(ticket).orElseThrow(()->
+                new NotFoundException(ExceptionMessage.TICKET_NOT_FOUND));
+        byte[] files = FileUtils.decompressFileData(dbFileData.getData());
+        FileData file = FileData.builder()
+                .name(dbFileData.getName())
+                .type(dbFileData.getType())
+                .data(files)
+                .build();
+        ticketResponse.setFile(file);
+        return ticketResponse;
     }
 
     @Override
@@ -126,23 +155,6 @@ public class TicketServiceImpl implements TicketService {
         };
         log.info("All tickets fetched");
         return ticketMapper.toTicketResponseList(tickets);
-    }
-
-    @Override
-    public TicketResponse getTicketById(Long ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
-                new NotFoundException(ExceptionMessage.TICKET_NOT_FOUND));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assert authentication != null;
-        User user = (User)authentication.getPrincipal();
-        assert user != null;
-        if(user.getRole().equals(Role.MANAGER) || !ticket.getCustomer().getId().equals(user.getId()) || (ticket.getAgent()!=null && !ticket.getAgent().getId().equals(user.getId()))){
-            throw new ResourceMismatchedException(ExceptionMessage.NOT_AUTHORIZED);
-        }
-        log.info("Ticket:{} is fetched", ticketId);
-        TicketResponse ticketResponse = ticketMapper.toTicketResponse(ticket);
-        log.info("Ticket content {}", ticketResponse);
-        return ticketResponse;
     }
 
     @Override

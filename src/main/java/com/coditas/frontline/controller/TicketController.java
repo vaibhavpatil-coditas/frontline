@@ -9,6 +9,10 @@ import com.coditas.frontline.dto.response.TicketResponse;
 import com.coditas.frontline.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -50,9 +54,12 @@ public class TicketController {
     }
 
     @GetMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID)
-    public ResponseEntity<ApplicationResponse<TicketResponse>> getTicketById(@PathVariable(name = "ticket-id") Long ticketId){
+    public ResponseEntity<ByteArrayResource> getTicketById(@PathVariable(name = "ticket-id") Long ticketId){
         TicketResponse response = ticketService.getTicketById(ticketId);
-        return ResponseEntity.ok(ApplicationResponse.success(response, "Fetched the ticket"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.parseMediaType(response.getFile().getType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;      filename = " + response.getFile().getName())
+                .body(new ByteArrayResource((response.getFile().getData())));
     }
 
     @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.RESOLVE)

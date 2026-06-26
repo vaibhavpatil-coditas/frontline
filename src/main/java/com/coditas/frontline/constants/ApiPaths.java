@@ -42,4 +42,9 @@ public final class ApiPaths {
         public static final String TEAM_ID = "/{team-id}";
         public static final String ADD_MEMBER = "/members";
     }
+
+    public static final class SpringAi {
+        private SpringAi(){}
+        public static final String TEST = "/test";
+    }
 }

@@ -5,6 +5,7 @@ import com.coditas.frontline.dto.response.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
@@ -18,6 +19,12 @@ import java.time.Instant;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception){
+        ErrorResponse errorResponse = createErrorResponse(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.INVALID_REQUEST_BODY);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 
     @ExceptionHandler(MultipartException.class)
     public ResponseEntity<ErrorResponse> multipartExceptionHandler(MultipartException exception){

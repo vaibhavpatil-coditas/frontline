@@ -1,10 +1,14 @@
 package com.coditas.frontline.utility;
 
+import com.coditas.frontline.constants.ExceptionMessage;
+import com.coditas.frontline.exception.InvalidFileFormatException;
+
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class FileUtils {
+    private FileUtils(){}
     public static byte[] compressFile(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
@@ -20,6 +24,7 @@ public class FileUtils {
         try {
             outputStream.close();
         } catch (Exception ignored) {
+            throw new InvalidFileFormatException(ExceptionMessage.FILE_FORMAT_NOT_VALID);
         }
         return outputStream.toByteArray();
     }
@@ -37,6 +42,7 @@ public class FileUtils {
             }
             outputStream.close();
         } catch (Exception ignored) {
+            throw new InvalidFileFormatException(ExceptionMessage.FILE_FORMAT_NOT_VALID);
         }
         return outputStream.toByteArray();
     }

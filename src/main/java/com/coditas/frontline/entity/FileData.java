@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Entity @Data
 @AllArgsConstructor
@@ -23,4 +21,8 @@ public class FileData {
 
     @Column(name="data", columnDefinition = "bytea")
     private byte[] data;
+
+    @OneToOne
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
 }
