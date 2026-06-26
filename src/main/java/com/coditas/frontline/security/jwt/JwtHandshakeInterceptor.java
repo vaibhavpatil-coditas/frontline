@@ -5,12 +5,9 @@ import com.coditas.frontline.entity.Ticket;
 import com.coditas.frontline.entity.User;
 import com.coditas.frontline.exception.NotFoundException;
 import com.coditas.frontline.repository.TicketRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,9 +28,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        HttpRequest servletRequest = (HttpRequest) request;
-        String authHeader = servletRequest.getHeaders().get("Authorization").getFirst();
-        String requestURI = servletRequest.getURI().toString();
+        String authHeader = request.getHeaders().get("Authorization").getFirst();
+        String requestURI = request.getURI().toString();
         log.info("Intercepted URI: {}",requestURI);
         if(authHeader==null || !authHeader.startsWith("Bearer ")){
             log.info("Failed due to invalid Authorization header");

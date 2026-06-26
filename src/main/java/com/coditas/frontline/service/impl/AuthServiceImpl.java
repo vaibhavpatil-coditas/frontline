@@ -6,12 +6,13 @@ import com.coditas.frontline.entity.User;
 import com.coditas.frontline.security.jwt.JwtUtil;
 import com.coditas.frontline.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User principal = (User) authentication.getPrincipal();
         assert principal != null;
+        log.info("{} successfully logged in", request.getEmail());
         return new LoginResponse(jwtUtil.generateToken(principal));
     }
 }

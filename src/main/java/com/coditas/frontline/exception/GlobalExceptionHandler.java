@@ -11,11 +11,25 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
+import java.io.IOException;
 import java.time.Instant;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ErrorResponse> multipartExceptionHandler(MultipartException exception){
+        ErrorResponse errorResponse = createErrorResponse(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.FILE_NOT_ATTACHED);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErrorResponse> iOExceptionHandler(IOException exception){
+        ErrorResponse errorResponse = createErrorResponse(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> expiredJwtExceptionHandler(ExpiredJwtException exception){

@@ -13,6 +13,7 @@ import com.coditas.frontline.repository.AgentManagerRepository;
 import com.coditas.frontline.repository.UserRepository;
 import com.coditas.frontline.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,12 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse registerCustomer(UserRequest request) {
-        return saveUser(request, Role.CUSTOMER);
+        UserResponse userResponse = saveUser(request, Role.CUSTOMER);
+        log.info("Customer with id {} has been persisted", userResponse.getId());
+        return userResponse;
     }
 
     @Override
     public UserResponse registerManager(UserRequest request) {
-        return saveUser(request, Role.MANAGER);
+        UserResponse userResponse = saveUser(request, Role.MANAGER);
+        log.info("Manager with id {} has been persisted", userResponse.getId());
+        return userResponse;
     }
 
     @Override
@@ -56,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 .manager(manager)
                 .build();
         agentManagerRepository.save(agentManager);
-
+        log.info("Agent with id {} has been persisted", agent.getId());
         return userResponse;
     }
 

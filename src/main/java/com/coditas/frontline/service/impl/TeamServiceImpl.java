@@ -17,6 +17,7 @@ import com.coditas.frontline.repository.TeamRepository;
 import com.coditas.frontline.repository.UserRepository;
 import com.coditas.frontline.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
@@ -31,7 +33,6 @@ public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
     private final UserRepository userRepository;
-    private final TeamAgentMapper teamAgentMapper;
     private final TeamAgentRepository teamAgentRepository;
 
     @Override
@@ -45,6 +46,7 @@ public class TeamServiceImpl implements TeamService {
                 .createdAt(Instant.now())
                 .build();
         Team savedTeam = teamRepository.save(team);
+        log.info("Team has been created with id: {}", savedTeam.getId());
         return teamMapper.toTeamResponse(savedTeam);
     }
 
@@ -66,6 +68,7 @@ public class TeamServiceImpl implements TeamService {
         teamAgentRepository.save(teamAgent);
         team.setTeamSize(team.getTeamSize()+1);
         Team savedTeam = teamRepository.save(team);
+        log.info("Agent:{} is added to the team:{}",agent.getId(), savedTeam.getId());
         return teamMapper.toTeamResponse(savedTeam);
     }
 }

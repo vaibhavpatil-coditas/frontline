@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -23,10 +25,11 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @PostMapping(ApiPaths.Ticket.TICKETS)
+    @PostMapping(value = ApiPaths.Ticket.TICKETS)
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<ApplicationResponse<TicketResponse>> raiseTicket(@Valid @RequestBody TicketRequest request){
-        TicketResponse response = ticketService.raiseTicket(request);
+    public ResponseEntity<ApplicationResponse<TicketResponse>> raiseTicket(@Valid @RequestPart("data") TicketRequest request,
+                                                                           @RequestPart("file") MultipartFile file) throws IOException {
+        TicketResponse response = ticketService.raiseTicket(file, request);
         URI location = URI.create(ApiPaths.BASE_PATH+ApiPaths.Ticket.TICKETS+"/"+response.getId());
         return ResponseEntity.created(location).body(ApplicationResponse.success(response, "Ticket raised successfully"));
     }
@@ -77,7 +80,7 @@ public class TicketController {
     @PatchMapping(ApiPaths.Ticket.TICKETS+ApiPaths.Ticket.TICKET_ID+ApiPaths.Ticket.PRIORITY)
     @PreAuthorize("hasAnyRole('MANAGER')")
     public ResponseEntity<ApplicationResponse<TicketResponse>> setPriority(@PathVariable(name = "ticket-id") Long ticketId,
-                                                                          @RequestBody PriorityRequest request){
+                                                                           @RequestBody PriorityRequest request){
         TicketResponse response = ticketService.setPriority(ticketId, request);
         return ResponseEntity.ok(ApplicationResponse.success(response, "Ticket priority set"));
     }
